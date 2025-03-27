@@ -31,4 +31,6 @@ dist-ssr
 core
 
 .github/
+# env 
+.env
 

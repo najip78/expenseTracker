@@ -8,6 +8,10 @@ import TransactionForm from "@/components/transactions/TransactionForm";
 import { fetchTransactions, deleteTransaction } from "@/lib/api";
 import { Transaction } from "@/types/transaction";
 import { useAuth } from "@/contexts/AuthContext";
+import { createClient } from "@supabase/supabase-js";
+import { preprocess } from "zod";
+
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.NEXT_PUBLIC_SUPABASE_KEY);
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -34,8 +38,18 @@ export default function Transactions() {
 
   const handleAddTransaction = async (data: any) => {
     console.log("New transaction:", data);
+    const { error } = await supabase
+    .from("transactions")
+    .insert([data]);
+
+  if (error) {
+    console.error("Error adding transaction:", error.message);
+  } else {
+    console.log("Transaction successfully added to Supabase!");
+  }
+
     setIsTransactionFormOpen(false);
-    // In a real implementation, this would add the transaction to the database
+     
     // and refresh the transactions list
     try {
       // Refresh transactions after adding
